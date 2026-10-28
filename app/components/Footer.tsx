@@ -1,4 +1,5 @@
 'use client';
+import { FaFacebook, FaInstagram, FaEtsy } from 'react-icons/fa';
 import Link from 'next/link';
 import { navItems } from '@/config/navigation';
 
@@ -11,19 +12,19 @@ export default function Footer() {
         <Link href="/" className="flex items-center space-x-2">
           <span className="font-bold text-xl text-slate-100 tracking-tight">Stoic Landscapes</span>
         </Link>
-
-        {/* Desktop Navigation, do not show "Home" link in desktop view */}
-        <nav className="hidden md:flex items-center space-x-8">
-          {navItems.filter(item => item.label!=='Home').map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        
+        {/* Social Media Icons */}
+        <div className="flex space-x-4">
+          <Link href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+            <FaFacebook />
+          </Link>
+          <Link href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+            <FaInstagram />
+          </Link>
+          <Link href="https://www.etsy.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+            <FaEtsy />
+          </Link>
+        </div>
 
       </div>
     </footer>
