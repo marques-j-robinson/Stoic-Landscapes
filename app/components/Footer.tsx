@@ -26,6 +26,13 @@ export default function Footer() {
         </div>
 
       </div>
+
+        {/* Copyright */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-center">
+        <p className="text-gray-400 text-sm">
+          &copy; {new Date().getFullYear()} Stoic Landscapes. All rights reserved.
+        </p>
+      </div>
     </footer>
   );
 }
