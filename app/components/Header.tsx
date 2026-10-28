@@ -11,14 +11,7 @@ export default function Header() {
         
         {/* Logo / Brand */}
         <Link href="/" className="flex items-center space-x-2">
-          <Image 
-            src="/logo.svg" 
-            alt="Company Logo" 
-            width={32} 
-            height={32} 
-            priority
-          />
-          <span className="font-bold text-xl text-gray-900 tracking-tight">Brand</span>
+          <span className="font-bold text-xl text-gray-900 tracking-tight">Stoic Landscapes</span>
         </Link>
 
         {/* Desktop Navigation */}
