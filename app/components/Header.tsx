@@ -14,9 +14,9 @@ export default function Header() {
           <span className="font-bold text-xl text-gray-900 tracking-tight">Stoic Landscapes</span>
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation, do not show "Home" link in desktop view */}
         <nav className="hidden md:flex items-center space-x-8">
-          {navItems.map((item) => (
+          {navItems.filter(item => item.label!=='Home').map((item) => (
             <Link
               key={item.href}
               href={item.href}
