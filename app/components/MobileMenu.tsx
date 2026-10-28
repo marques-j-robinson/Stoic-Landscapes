@@ -38,13 +38,6 @@ export default function MobileMenu({ items } : { items: NavItem[] }) {
                 {item.label}
               </Link>
             ))}
-            <Link
-              href="/login"
-              onClick={() => setIsOpen(false)}
-              className="w-full text-center bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors"
-            >
-              Get Started
-            </Link>
           </nav>
         </div>
       )}

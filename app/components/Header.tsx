@@ -27,16 +27,6 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Desktop CTA Button */}
-        <div className="hidden md:flex items-center">
-          <Link
-            href="/login"
-            className="bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors"
-          >
-            Get Started
-          </Link>
-        </div>
-
         {/* Mobile Navigation Menu Toggle */}
         <MobileMenu items={navItems} />
 
