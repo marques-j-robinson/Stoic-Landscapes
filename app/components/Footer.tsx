@@ -1,7 +1,6 @@
 'use client';
 import Link from 'next/link';
 import { navItems } from '@/config/navigation';
-import MobileMenu from './MobileMenu';
 
 export default function Footer() {
   return (
@@ -10,7 +9,7 @@ export default function Footer() {
         
         {/* Logo / Brand */}
         <Link href="/" className="flex items-center space-x-2">
-          <span className="font-bold text-xl text-slate-500 tracking-tight">Stoic Landscapes</span>
+          <span className="font-bold text-xl text-slate-100 tracking-tight">Stoic Landscapes</span>
         </Link>
 
         {/* Desktop Navigation, do not show "Home" link in desktop view */}
@@ -25,9 +24,6 @@ export default function Footer() {
             </Link>
           ))}
         </nav>
-
-        {/* Mobile Navigation Menu Toggle */}
-        <MobileMenu items={navItems} />
 
       </div>
     </footer>
