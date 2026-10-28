@@ -1,7 +1,6 @@
 'use client';
 import { FaFacebook, FaInstagram, FaEtsy } from 'react-icons/fa';
 import Link from 'next/link';
-import { navItems } from '@/config/navigation';
 
 export default function Footer() {
   return (
