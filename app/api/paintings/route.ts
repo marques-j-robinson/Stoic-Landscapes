@@ -163,3 +163,31 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+        if (!id) {
+          const [rows] = await db.execute(
+          `SELECT id, title, description, image_key, content_type FROM paintings`,
+        );
+
+        return NextResponse.json(rows, { status: 200 });  
+      } else {
+        const [rows] = await db.execute(
+          `SELECT id, title, description, image_key, content_type FROM paintings WHERE id = ?`,
+          [id],
+        );
+
+        return NextResponse.json(rows, { status: 200 });
+      }
+    
+  } catch (error) {
+    console.error("Failed to fetch paintings:", error);
+    return NextResponse.json(
+      { error: "Unable to fetch paintings." },
+      { status: 500 },
+    );
+  }
+}
