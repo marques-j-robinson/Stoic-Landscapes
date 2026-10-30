@@ -224,3 +224,44 @@ export async function PUT(request: Request) {
     );
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "An ID is required." },
+        { status: 400 },
+      );
+    }
+
+    const [rows] = await db.execute(
+          `SELECT image_key FROM paintings WHERE id = ?`,
+          [id],
+        );
+
+    const imageKey = rows[0]?.image_key;
+
+    await s3.send(
+      new DeleteObjectCommand({
+        Bucket: bucketName,
+        Key: imageKey,
+      }),
+    );
+
+    const [result] = await db.execute(
+      `DELETE FROM paintings WHERE id = ?`,
+      [id],
+    );
+
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (error) {
+    console.error("Failed to delete painting:", error);
+    return NextResponse.json(
+      { error: "Unable to delete painting." },
+      { status: 500 },
+    );
+  }
+}
