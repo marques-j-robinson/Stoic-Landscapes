@@ -6,9 +6,18 @@ import {
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { z } from "zod";
+import { RowDataPacket } from "mysql2";
 
 import { db } from "@/lib/db";
 import { bucketName, s3 } from "@/lib/s3";
+
+interface Painting extends RowDataPacket {
+  id: number;
+  title: string;
+  description: string | null;
+  image_key: string;
+  content_type: string;
+}
 
 const paintingSchema = z.object({
   title: z.string().trim().min(1).max(200),
@@ -237,7 +246,7 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const [rows] = await db.execute(
+    const [rows] = await db.execute<Painting[]>(
           `SELECT image_key FROM paintings WHERE id = ?`,
           [id],
         );
