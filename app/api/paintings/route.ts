@@ -260,7 +260,7 @@ export async function DELETE(request: Request) {
       }),
     );
 
-    const [result] = await db.execute(
+    await db.execute(
       `DELETE FROM paintings WHERE id = ?`,
       [id],
     );
