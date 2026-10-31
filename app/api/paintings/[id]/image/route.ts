@@ -14,7 +14,14 @@ import { detectImageType, MAX_FILE_SIZE } from "@/lib/image-validation";
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const formData = await request.formData();
+    const paintingId = Number(id);
+
+    if (!Number.isSafeInteger(paintingId) || paintingId <= 0) {
+        return NextResponse.json(
+            { error: "Invalid painting ID." },
+            { status: 400 }
+        );
+    }
 
     const [rows] = await db.execute<Painting[]>(
       `SELECT image_key FROM paintings WHERE id = ?`,
@@ -30,6 +37,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
     const imageKey = rows[0].image_key;
 
+    const formData = await request.formData();
     const file = formData.get("image");
 
     if (!(file instanceof File) || file.size === 0) {
