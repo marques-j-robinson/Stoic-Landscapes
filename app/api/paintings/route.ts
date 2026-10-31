@@ -10,26 +10,6 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { bucketName, s3 } from "@/lib/s3";
 
-/**
- * Fetches all paintings from the database. 
- */
-
-export async function GET() {
-  try {
-    const [rows] = await db.execute(
-      `SELECT id, title, description, image_key AS imageKey, content_type AS contentType FROM paintings`,
-    );
-
-    return NextResponse.json(rows, { status: 200 });  
-  } catch (error) {
-    console.error("Failed to fetch paintings:", error);
-    return NextResponse.json(
-      { error: "Unable to fetch paintings." },
-      { status: 500 },
-    );
-  }
-}
-
 const paintingSchema = z.object({
   title: z.string().trim().min(1).max(200),
   description: z.string().trim().max(5000).optional(),
@@ -75,6 +55,12 @@ function detectImageType(buffer: Buffer): {
 
   return null;
 }
+
+/**
+ * Creates a new painting in the database.
+ * 
+ * @body { title: string, description?: string, image: File, where image is a JPEG, PNG, or WebP file }
+ */
 
 export async function POST(request: Request) {
   let uploadedKey: string | undefined;
@@ -179,6 +165,26 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { error: "Unable to create painting." },
+      { status: 500 },
+    );
+  }
+}
+
+/**
+ * Fetches all paintings from the database. 
+ */
+
+export async function GET() {
+  try {
+    const [rows] = await db.execute(
+      `SELECT id, title, description, image_key AS imageKey, content_type AS contentType FROM paintings`,
+    );
+
+    return NextResponse.json(rows, { status: 200 });  
+  } catch (error) {
+    console.error("Failed to fetch paintings:", error);
+    return NextResponse.json(
+      { error: "Unable to fetch paintings." },
       { status: 500 },
     );
   }
