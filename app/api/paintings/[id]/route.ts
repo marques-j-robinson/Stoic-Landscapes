@@ -13,6 +13,15 @@ import { bucketName, s3 } from "@/lib/s3";
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
+    const paintingId = Number(id);
+
+    if (!Number.isSafeInteger(paintingId) || paintingId <= 0) {
+        return NextResponse.json(
+            { error: "Invalid painting ID." },
+            { status: 400 }
+        );
+    }
+    
     const [rows] = await db.execute<Painting[]>(
         `SELECT id, title, description, image_key AS imageKey, content_type AS contentType FROM paintings WHERE id = ?`,
         [id],
@@ -37,6 +46,14 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
+    const paintingId = Number(id);
+
+    if (!Number.isSafeInteger(paintingId) || paintingId <= 0) {
+        return NextResponse.json(
+            { error: "Invalid painting ID." },
+            { status: 400 }
+        );
+    }
 
     const formData = await request.formData();
     const title = formData.get("title") as string;
@@ -66,6 +83,14 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
+    const paintingId = Number(id);
+
+    if (!Number.isSafeInteger(paintingId) || paintingId <= 0) {
+        return NextResponse.json(
+            { error: "Invalid painting ID." },
+            { status: 400 }
+        );
+    }
 
     const [rows] = await db.execute<Painting[]>(
           `SELECT image_key FROM paintings WHERE id = ?`,
