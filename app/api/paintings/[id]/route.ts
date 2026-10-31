@@ -1,19 +1,10 @@
 import { NextResponse } from "next/server";
-import { RowDataPacket } from "mysql2";
 import {
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 
-import { db } from "@/lib/db";
+import { db, Painting } from "@/lib/db";
 import { bucketName, s3 } from "@/lib/s3";
-
-interface Painting extends RowDataPacket {
-  id: number;
-  title: string;
-  description: string | null;
-  imageKey: string;
-  contentType: string;
-}
 
 /**
  * Fetches a specific painting from the database by ID.

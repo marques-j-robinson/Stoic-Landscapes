@@ -1,4 +1,13 @@
 import mysql from "mysql2/promise";
+import { RowDataPacket } from "mysql2";
+
+export interface Painting extends RowDataPacket {
+  id: number;
+  title: string;
+  description: string | null;
+  imageKey: string;
+  contentType: string;
+}
 
 export const db = mysql.createPool({
   host: process.env.DB_HOST ?? "127.0.0.1",
