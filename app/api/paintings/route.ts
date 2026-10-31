@@ -11,6 +11,26 @@ import { RowDataPacket } from "mysql2";
 import { db } from "@/lib/db";
 import { bucketName, s3 } from "@/lib/s3";
 
+/**
+ * Fetches all paintings from the database. 
+ */
+
+export async function GET() {
+  try {
+    const [rows] = await db.execute(
+      `SELECT id, title, description, image_key AS imageKey, content_type AS contentType FROM paintings`,
+    );
+
+    return NextResponse.json(rows, { status: 200 });  
+  } catch (error) {
+    console.error("Failed to fetch paintings:", error);
+    return NextResponse.json(
+      { error: "Unable to fetch paintings." },
+      { status: 500 },
+    );
+  }
+}
+
 interface Painting extends RowDataPacket {
   id: number;
   title: string;
@@ -168,34 +188,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { error: "Unable to create painting." },
-      { status: 500 },
-    );
-  }
-}
-
-export async function GET(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
-        if (!id) {
-          const [rows] = await db.execute(
-          `SELECT id, title, description, image_key, content_type FROM paintings`,
-        );
-
-        return NextResponse.json(rows, { status: 200 });  
-      } else {
-        const [rows] = await db.execute(
-          `SELECT id, title, description, image_key, content_type FROM paintings WHERE id = ?`,
-          [id],
-        );
-
-        return NextResponse.json(rows, { status: 200 });
-      }
-    
-  } catch (error) {
-    console.error("Failed to fetch paintings:", error);
-    return NextResponse.json(
-      { error: "Unable to fetch paintings." },
       { status: 500 },
     );
   }
