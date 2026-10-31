@@ -47,13 +47,6 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params;
 
-    if (!id) {
-      return NextResponse.json(
-        { error: "An ID is required." },
-        { status: 400 },
-      );
-    }
-
     const formData = await request.formData();
     const title = formData.get("title") as string;
     const description = formData.get("description") as string | null;
