@@ -193,39 +193,6 @@ export async function POST(request: Request) {
   }
 }
 
-export async function PUT(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
-
-    if (!id) {
-      return NextResponse.json(
-        { error: "An ID is required." },
-        { status: 400 },
-      );
-    }
-
-    const body = await request.json();
-    console.log(body)
-    const { title, description, image_key: imageKey, content_type:contentType } = body;
-
-    await db.execute(
-      `UPDATE paintings
-       SET title = ?, description = ?, image_key = ?, content_type = ?
-       WHERE id = ?`,
-      [title, description ?? null, imageKey, contentType, id],
-    );
-
-    return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error) {
-    console.error("Failed to update painting:", error);
-    return NextResponse.json(
-      { error: "Unable to update painting." },
-      { status: 500 },
-    );
-  }
-}
-
 export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);

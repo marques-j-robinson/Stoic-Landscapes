@@ -31,3 +31,41 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     );
   }
 }
+
+/**
+ * Updates a specific painting in the database by ID.
+ * 
+ * @body { title: string, description?: string }
+ */
+
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "An ID is required." },
+        { status: 400 },
+      );
+    }
+
+    const formData = await request.formData();
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string | null;
+
+    await db.execute(
+      `UPDATE paintings
+       SET title = ?, description = ?
+       WHERE id = ?`,
+      [title, description ?? null, id],
+    );
+
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (error) {
+    console.error("Failed to update painting:", error);
+    return NextResponse.json(
+      { error: "Unable to update painting." },
+      { status: 500 },
+    );
+  }
+}
