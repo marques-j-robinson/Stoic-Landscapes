@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { RowDataPacket } from "mysql2";
+import {
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
+
 import { db } from "@/lib/db";
+import { bucketName, s3 } from "@/lib/s3";
 
 interface Painting extends RowDataPacket {
   id: number;
@@ -65,6 +70,43 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     console.error("Failed to update painting:", error);
     return NextResponse.json(
       { error: "Unable to update painting." },
+      { status: 500 },
+    );
+  }
+}
+
+/**
+ * Deletes a specific painting from the database by ID.
+ */
+
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+
+    const [rows] = await db.execute<Painting[]>(
+          `SELECT image_key FROM paintings WHERE id = ?`,
+          [id],
+        );
+
+    const imageKey = rows[0]?.image_key;
+
+    await s3.send(
+      new DeleteObjectCommand({
+        Bucket: bucketName,
+        Key: imageKey,
+      }),
+    );
+
+    await db.execute(
+      `DELETE FROM paintings WHERE id = ?`,
+      [id],
+    );
+
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (error) {
+    console.error("Failed to delete painting:", error);
+    return NextResponse.json(
+      { error: "Unable to delete painting." },
       { status: 500 },
     );
   }

@@ -6,7 +6,6 @@ import {
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { z } from "zod";
-import { RowDataPacket } from "mysql2";
 
 import { db } from "@/lib/db";
 import { bucketName, s3 } from "@/lib/s3";
@@ -29,14 +28,6 @@ export async function GET() {
       { status: 500 },
     );
   }
-}
-
-interface Painting extends RowDataPacket {
-  id: number;
-  title: string;
-  description: string | null;
-  image_key: string;
-  content_type: string;
 }
 
 const paintingSchema = z.object({
@@ -188,47 +179,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { error: "Unable to create painting." },
-      { status: 500 },
-    );
-  }
-}
-
-export async function DELETE(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
-
-    if (!id) {
-      return NextResponse.json(
-        { error: "An ID is required." },
-        { status: 400 },
-      );
-    }
-
-    const [rows] = await db.execute<Painting[]>(
-          `SELECT image_key FROM paintings WHERE id = ?`,
-          [id],
-        );
-
-    const imageKey = rows[0]?.image_key;
-
-    await s3.send(
-      new DeleteObjectCommand({
-        Bucket: bucketName,
-        Key: imageKey,
-      }),
-    );
-
-    await db.execute(
-      `DELETE FROM paintings WHERE id = ?`,
-      [id],
-    );
-
-    return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error) {
-    console.error("Failed to delete painting:", error);
-    return NextResponse.json(
-      { error: "Unable to delete painting." },
       { status: 500 },
     );
   }
