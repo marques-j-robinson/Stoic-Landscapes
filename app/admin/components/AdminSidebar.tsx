@@ -1,38 +1,8 @@
 
-"use client";
-
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  Images,
-  Plus,
-  Settings,
-  LogOut,
-  Mountain,
-} from "lucide-react";
-
-const navigation = [
-  {
-    name: "Dashboard",
-    href: "/admin",
-    icon: LayoutDashboard,
-  },
-  {
-    name: "Paintings",
-    href: "/admin/paintings",
-    icon: Images,
-  },
-  {
-    name: "Add Painting",
-    href: "/admin/paintings/new",
-    icon: Plus,
-  },
-];
+import AdminNavigation from "./AdminNavigation";
+import { Mountain, LogOut } from "lucide-react";
 
 export default function AdminSidebar() {
-  const pathname = usePathname();
-
   return (
     <aside className="flex min-h-screen w-64 flex-col bg-[#242522] text-[#EAE9E1]">
 
@@ -50,55 +20,8 @@ export default function AdminSidebar() {
         </div>
       </div>
 
-      {/* Main Navigation */}
-      <nav className="flex-1 px-4 py-6">
-
-        <p className="mb-3 px-3 text-xs font-semibold uppercase tracking-widest text-gray-500">
-          Workspace
-        </p>
-
-        <div className="space-y-1">
-          {navigation.map((item) => {
-            const isActive =
-              item.href === "/admin"
-                ? pathname === "/admin"
-                : pathname === item.href ||
-                  pathname.startsWith(`${item.href}/`);
-
-            const Icon = item.icon;
-
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex items-center gap-3 rounded-md px-3 py-3 text-sm transition-colors ${
-                  isActive
-                    ? "bg-[#44483B] text-white"
-                    : "text-gray-400 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                <Icon className="h-5 w-5" />
-                {item.name}
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* Account Navigation */}
-        <div className="mt-10">
-          <p className="mb-3 px-3 text-xs font-semibold uppercase tracking-widest text-gray-500">
-            Account
-          </p>
-
-          <Link
-            href="/admin/settings"
-            className="flex items-center gap-3 rounded-md px-3 py-3 text-sm text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
-          >
-            <Settings className="h-5 w-5" />
-            Settings
-          </Link>
-        </div>
-      </nav>
+      {/* Navigation */}
+      <AdminNavigation />
 
       {/* Account Footer */}
       <div className="border-t border-white/10 p-4">
@@ -115,7 +38,7 @@ export default function AdminSidebar() {
           <button
             type="button"
             aria-label="Sign out"
-            className="rounded-md p-2 text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
+            className="rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white"
             disabled
             title="Authentication not implemented yet"
           >
@@ -123,6 +46,7 @@ export default function AdminSidebar() {
           </button>
         </div>
       </div>
+
     </aside>
   );
 }
