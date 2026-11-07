@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { db, Painting } from "@/lib/db";
+import { Painting } from "@/lib/db";
 import {
   Images,
   Plus,
@@ -8,9 +8,18 @@ import {
 } from "lucide-react";
 
 export default async function DashboardContent() {
-  const [paintings] = await db.execute<Painting[]>(
-    "SELECT * FROM paintings ORDER BY created_at DESC"
+  const response = await fetch(
+    `${process.env.APP_URL}/api/paintings`,
+    {
+      cache: "no-store",
+    }
   );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch paintings.");
+  }
+
+  const paintings: Painting[] = await response.json();
 
   const totalPaintings = paintings.length;
   const recentPaintings = paintings.slice(0, 5);
