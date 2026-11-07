@@ -29,7 +29,7 @@ export default async function DashboardContent() {
 
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-semibold text-[#292A26]">
+        <h1 className="text-3xl font-semibold text-white">
           Dashboard
         </h1>
         <p className="mt-2 text-sm text-gray-500">
