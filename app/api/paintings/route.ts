@@ -1,13 +1,15 @@
 
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import {
+  GetObjectCommand,
   PutObjectCommand,
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { z } from "zod";
 
-import { db } from "@/lib/db";
+import { db, Painting } from "@/lib/db";
 import { bucketName, s3 } from "@/lib/s3";
 import { detectImageType, MAX_FILE_SIZE } from "@/lib/image-validation";
 
@@ -136,11 +138,29 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const [rows] = await db.execute(
+    const [rows] = await db.execute<Painting[]>(
       `SELECT id, title, description, image_key AS imageKey, content_type AS contentType FROM paintings`,
     );
+    const paintingsWithUrls = await Promise.all(
+      rows.map(async (painting) => {
+        const command = new GetObjectCommand({
+          Bucket: bucketName,
+          Key: painting.imageKey,
+        });
 
-    return NextResponse.json(rows, { status: 200 });  
+        const imageUrl = await getSignedUrl(s3, command, {
+          expiresIn: 3600,
+        });
+
+        return {
+          ...painting,
+          imageUrl,
+        };
+      })
+    );
+
+
+    return NextResponse.json(paintingsWithUrls, { status: 200 });  
   } catch (error) {
     console.error("Failed to fetch paintings:", error);
     return NextResponse.json(

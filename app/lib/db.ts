@@ -7,6 +7,7 @@ export interface Painting extends RowDataPacket {
   description: string | null;
   imageKey: string;
   contentType: string;
+  imageUrl: string; // Added property for the image URL
 }
 
 export const db = mysql.createPool({

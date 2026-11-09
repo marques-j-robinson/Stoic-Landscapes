@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import {
+  GetObjectCommand,
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 
@@ -26,8 +28,25 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
         `SELECT id, title, description, image_key AS imageKey, content_type AS contentType FROM paintings WHERE id = ?`,
         [id],
     );
+    const paintingsWithUrls = await Promise.all(
+      rows.map(async (painting) => {
+        const command = new GetObjectCommand({
+          Bucket: bucketName,
+          Key: painting.imageKey,
+        });
 
-    return NextResponse.json(rows[0], { status: 200 });
+        const imageUrl = await getSignedUrl(s3, command, {
+          expiresIn: 3600,
+        });
+
+        return {
+          ...painting,
+          imageUrl,
+        };
+      })
+    );
+
+    return NextResponse.json(paintingsWithUrls, { status: 200 });
   } catch (error) {
     console.error("Failed to fetch paintings:", error);
     return NextResponse.json(
