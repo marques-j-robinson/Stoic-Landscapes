@@ -18,35 +18,31 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     const paintingId = Number(id);
 
     if (!Number.isSafeInteger(paintingId) || paintingId <= 0) {
-        return NextResponse.json(
-            { error: "Invalid painting ID." },
-            { status: 400 }
-        );
+      return NextResponse.json(
+        { error: "Invalid painting ID." },
+        { status: 400 }
+      );
     }
-    
-    const [rows] = await db.execute<Painting[]>(
-        `SELECT id, title, description, image_key AS imageKey, content_type AS contentType FROM paintings WHERE id = ?`,
-        [id],
+
+    const [[painting]] = await db.execute<Painting[]>(
+      `SELECT id, title, description, image_key AS imageKey, content_type AS contentType FROM paintings WHERE id = ?`,
+      [id],
     );
-    const paintingsWithUrls = await Promise.all(
-      rows.map(async (painting) => {
-        const command = new GetObjectCommand({
-          Bucket: bucketName,
-          Key: painting.imageKey,
-        });
+    const command = new GetObjectCommand({
+      Bucket: bucketName,
+      Key: painting.imageKey,
+    });
 
-        const imageUrl = await getSignedUrl(s3, command, {
-          expiresIn: 3600,
-        });
+    const imageUrl = await getSignedUrl(s3, command, {
+      expiresIn: 3600,
+    });
 
-        return {
-          ...painting,
-          imageUrl,
-        };
-      })
-    );
+    const response = {
+      ...painting,
+      imageUrl,
+    };
 
-    return NextResponse.json(paintingsWithUrls, { status: 200 });
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
     console.error("Failed to fetch paintings:", error);
     return NextResponse.json(
@@ -68,15 +64,15 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const paintingId = Number(id);
 
     if (!Number.isSafeInteger(paintingId) || paintingId <= 0) {
-        return NextResponse.json(
-            { error: "Invalid painting ID." },
-            { status: 400 }
-        );
+      return NextResponse.json(
+        { error: "Invalid painting ID." },
+        { status: 400 }
+      );
     }
 
-    const formData = await request.formData();
-    const title = formData.get("title") as string;
-    const description = formData.get("description") as string | null;
+    const body = await request.json();
+
+    const { title, description } = body;
 
     await db.execute(
       `UPDATE paintings
@@ -105,16 +101,16 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     const paintingId = Number(id);
 
     if (!Number.isSafeInteger(paintingId) || paintingId <= 0) {
-        return NextResponse.json(
-            { error: "Invalid painting ID." },
-            { status: 400 }
-        );
+      return NextResponse.json(
+        { error: "Invalid painting ID." },
+        { status: 400 }
+      );
     }
 
     const [rows] = await db.execute<Painting[]>(
-          `SELECT image_key FROM paintings WHERE id = ?`,
-          [id],
-        );
+      `SELECT image_key FROM paintings WHERE id = ?`,
+      [id],
+    );
 
     const imageKey = rows[0]?.image_key;
 
