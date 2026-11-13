@@ -1,6 +1,7 @@
-
 "use client";
 
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ExternalLink, ChevronRight, User } from "lucide-react";
@@ -20,6 +21,14 @@ export default function AdminHeader() {
     (pathname.startsWith("/admin/paintings/")
       ? "Edit Painting"
       : "Admin");
+
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await authClient.signOut();
+    router.push("/login");
+    router.refresh();
+  };
 
   return (
     <header className="flex h-20 items-center justify-between border-b border-gray-200 bg-white px-6">
@@ -64,6 +73,12 @@ export default function AdminHeader() {
 
           <ChevronRight className="h-4 w-4 rotate-90 text-gray-400" />
         </div>
+        <button
+          onClick={handleSignOut}
+          className="rounded-md px-4 py-2 text-sm hover:bg-gray-200"
+        >
+          Sign Out
+        </button>
 
       </div>
     </header>
