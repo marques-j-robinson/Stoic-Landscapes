@@ -11,6 +11,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1159.0",
     "@aws-sdk/s3-request-presigner": "^3.1164.0",
+    "better-auth": "^1.7.22",
     "lucide-react": "^1.69.0",
     "mysql2": "^3.24.6",
     "next": "16.4.3",
