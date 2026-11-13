@@ -1,3 +1,4 @@
+import { getSession } from "@/lib/auth-guard";
 import { NextResponse } from "next/server";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import {
@@ -59,6 +60,15 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
  */
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getSession(request.headers);
+
+  if (!session) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
   try {
     const { id } = await params;
     const paintingId = Number(id);
@@ -96,6 +106,15 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
  */
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getSession(request.headers);
+
+  if (!session) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
   try {
     const { id } = await params;
     const paintingId = Number(id);

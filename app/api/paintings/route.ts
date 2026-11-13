@@ -1,4 +1,4 @@
-
+import { getSession } from "@/lib/auth-guard";
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -25,6 +25,15 @@ const paintingSchema = z.object({
  */
 
 export async function POST(request: Request) {
+  const session = await getSession(request.headers);
+
+  if (!session) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
   let uploadedKey: string | undefined;
 
   try {
@@ -160,7 +169,7 @@ export async function GET() {
     );
 
 
-    return NextResponse.json(paintingsWithUrls, { status: 200 });  
+    return NextResponse.json(paintingsWithUrls, { status: 200 });
   } catch (error) {
     console.error("Failed to fetch paintings:", error);
     return NextResponse.json(

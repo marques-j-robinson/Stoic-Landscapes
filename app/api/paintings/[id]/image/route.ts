@@ -1,3 +1,4 @@
+import { getSession } from "@/lib/auth-guard";
 import { NextResponse } from "next/server";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 
@@ -12,15 +13,24 @@ import { detectImageType, MAX_FILE_SIZE } from "@/lib/image-validation";
  */
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getSession(request.headers);
+
+  if (!session) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
   try {
     const { id } = await params;
     const paintingId = Number(id);
 
     if (!Number.isSafeInteger(paintingId) || paintingId <= 0) {
-        return NextResponse.json(
-            { error: "Invalid painting ID." },
-            { status: 400 }
-        );
+      return NextResponse.json(
+        { error: "Invalid painting ID." },
+        { status: 400 }
+      );
     }
 
     const [rows] = await db.execute<Painting[]>(
