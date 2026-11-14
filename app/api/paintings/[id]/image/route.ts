@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/auth-guard";
+import { getAdminSession } from "@/lib/auth-guard";
 import { NextResponse } from "next/server";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 
@@ -13,7 +13,7 @@ import { detectImageType, MAX_FILE_SIZE } from "@/lib/image-validation";
  */
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getSession(request.headers);
+  const session = await getAdminSession(request.headers);
 
   if (!session) {
     return NextResponse.json(

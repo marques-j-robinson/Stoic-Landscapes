@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/auth-guard";
+import { getAdminSession } from "@/lib/auth-guard";
 import { NextResponse } from "next/server";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import {
@@ -60,7 +60,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
  */
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getSession(request.headers);
+  const session = await getAdminSession(request.headers);
 
   if (!session) {
     return NextResponse.json(
@@ -106,7 +106,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
  */
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getSession(request.headers);
+  const session = await getAdminSession(request.headers);
 
   if (!session) {
     return NextResponse.json(

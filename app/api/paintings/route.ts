@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/auth-guard";
+import { getAdminSession } from "@/lib/auth-guard";
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -25,7 +25,7 @@ const paintingSchema = z.object({
  */
 
 export async function POST(request: Request) {
-  const session = await getSession(request.headers);
+  const session = await getAdminSession(request.headers);
 
   if (!session) {
     return NextResponse.json(

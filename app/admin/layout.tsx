@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { getAdminSession } from "@/lib/auth-guard";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -10,9 +10,7 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getAdminSession(await headers());
 
   if (!session) {
     redirect("/login");
